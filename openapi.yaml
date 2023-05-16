@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  title: To-Do
+  description: 'To-Do offers persisting function for to-do items.'
+  version: '1.0.0-pre'
+
+servers:
+  - url: /
+  
+components:
+  schemas:
+    ToDoItemRequest:
+      type: object
+      required:
+        - titel
+        - isCompleted
+      properties:
+        titel:
+          type: string
+        description:
+          type: string
+        isCompleted:
+          type: boolean
+          default: false
+    ToDoItem:
+      allOf:
+        - $ref: '#/components/schemas/ToDoItemRequest'
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+  parameters:
+    toDoIdParam:
+      name: toDoId
+      in: path
+      required: true
+      schema: 
+        type: integer
+        minimum: 0
+  responses:
+    NotFound:
+      description: Entity not found.
+    IllegalInput:
+      description: Illegal input for operation.
+  
+      
+paths:
+  /v1/to-do/{toDoId}:
+    get:
+      tags:
+        - To-Do
+      summary: Returns a To-Do-Item
+      parameters:
+        - $ref: '#/components/parameters/toDoIdParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToDoItem'
+        404:
+          $ref: '#/components/responses/NotFound'
+          
+    put:
+      tags:
+        - To-Do
+      summary: Updates a To-Do-Item
+      parameters:
+        - $ref: '#/components/parameters/toDoIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToDoItemRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToDoItem'
+        400:
+          $ref: '#/components/responses/IllegalInput'
+        404:
+          $ref: '#/components/responses/NotFound'
+          
+    delete:
+      tags:
+      - To-Do
+      summary: Deletes a To-Do-Item
+      parameters:
+        - $ref: '#/components/parameters/toDoIdParam'
+      responses:
+        200:
+          description: OK
+        404:
+          $ref: '#/components/responses/NotFound'
+          
+  /v1/to-do:   
+    get:
+      tags:
+        - To-Do
+      summary: Returns all To-Do-Items
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ToDoItem'
+                  
+    post:
+      tags:
+        - To-Do
+      summary: Creates a To-Do-Item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToDoItemRequest'
+      responses:
+        201:
+          description: OK
+        400:
+          $ref: '#/components/responses/IllegalInput'
