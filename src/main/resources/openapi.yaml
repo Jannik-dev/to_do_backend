@@ -9,10 +9,10 @@ components:
     ToDoItemRequest:
       type: object
       required:
-        - titel
+        - title
         - isCompleted
       properties:
-        titel:
+        title:
           type: string
         description:
           type: string
